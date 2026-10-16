@@ -493,15 +493,33 @@ function detail(p) {
   function adicionarInfo(rotulo, valor) {
     if (!valor) return;
 
-    const linha = document.createElement("p");
-    linha.className = "note";
+   const linha = document.createElement("p");
+linha.className = "note";
 
-    const titulo = document.createElement("strong");
-    titulo.textContent = rotulo + ": ";
+if (rotulo === "Data prevista para visita") {
+  linha.style.backgroundColor = "#fff1cc";
+  linha.style.border = "2px solid #e0a126";
+  linha.style.borderRadius = "8px";
+  linha.style.padding = "12px";
+  linha.style.margin = "12px 0";
+  linha.style.color = "#794500";
+  linha.style.fontSize = "18px";
+  linha.style.fontWeight = "bold";
 
-    linha.appendChild(titulo);
-    linha.appendChild(document.createTextNode(valor));
-    d.appendChild(linha);
+  const titulo = document.createElement("strong");
+  titulo.textContent = "📅 " + rotulo + ": ";
+
+  linha.appendChild(titulo);
+  linha.appendChild(document.createTextNode(valor));
+} else {
+  const titulo = document.createElement("strong");
+  titulo.textContent = rotulo + ": ";
+
+  linha.appendChild(titulo);
+  linha.appendChild(document.createTextNode(valor));
+}
+
+d.appendChild(linha);
   }
 
   if (dados) {
