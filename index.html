@@ -79,17 +79,202 @@ function styleFeature(feature){
  return {color: dim?'#d7dee2':'#7f929a',weight:dim?0.4:0.8,opacity:dim?0.35:0.9,
    fillColor:isHi?'#26836b':'#dfe6e9',fillOpacity:dim?0.06:(isHi?0.88:0.72)};
 }
-function detail(p){
- const d=document.getElementById('detail');
- d.innerHTML='';
- const title=document.createElement('div');title.className='name';title.textContent=p.municipio;d.appendChild(title);
- const status=document.createElement('div');status.style.margin='7px 0 10px';
- if(p.destacado){status.innerHTML='<span class="tag">Destacado no mapa original</span>'}
- else {status.textContent='Não destacado no mapa original'}
- d.appendChild(status);
- const code=document.createElement('div');code.textContent='Código IBGE: '+p.codigo;d.appendChild(code);
- const area=document.createElement('div');area.textContent='Área municipal: '+p.area_km2.toLocaleString('pt-BR')+' km²';d.appendChild(area);
- const note=document.createElement('p');note.className='note';note.textContent='A quantidade de atendimentos neste município não consta no arquivo de referência.';d.appendChild(note);
+const dadosMunicipios = {
+  "Diamantino": {
+    visita: "23 a 26/02/2027",
+    populacao: "21.941 habitantes",
+    fundacao: "18/09/1728 (Fundação); 23/11/1819 (Vila)",
+    feriados: "18/09 (Aniversário); 08/12 (Nossa Senhora da Conceição)",
+    tradicionais: "Festival das Águas (evento cultural)"
+  },
+  "Nova Mutum": {
+    visita: "08 a 13/03/2027",
+    populacao: "55.832 habitantes",
+    fundacao: "26/11/1981 (Fundação); 04/07/1988 (Emancipação)",
+    feriados: "04/07 (Aniversário); 12/10 (Nossa Senhora Aparecida)",
+    tradicionais: "31 de Outubro (Dia do Evangélico)"
+  },
+  "Lucas do Rio Verde": {
+    visita: "08 a 13/03/2027",
+    populacao: "83.770 habitantes",
+    fundacao: "05/08/1982 (Fundação); 04/07/1988 (Emancipação)",
+    feriados: "05/08 (Aniversário); 13/05 (Nossa Senhora de Fátima)",
+    tradicionais: "Festa do Milho (comemoração agroindustrial)"
+  },
+  "Juína": {
+    visita: "26 a 29/04/2027",
+    populacao: "49.530 habitantes",
+    fundacao: "10/07/1979 (Fundação); 09/05/1982 (Emancipação)",
+    feriados: "09/05 (Aniversário); 27/06 (Sagrado Coração de Jesus)",
+    tradicionais: "25 de Outubro (Dia do Evangélico)"
+  },
+  "Brasnorte": {
+    visita: "17 a 20/05/2027",
+    populacao: "18.407 habitantes",
+    fundacao: "01/08/1978 (Povoamento); 05/09/1986 (Emancipação)",
+    feriados: "01/06 (Aniversário); 13/06 (Santo Antônio)",
+    tradicionais: "Festivais e feiras agropecuárias locais"
+  },
+  "Porto Esperidião": {
+    visita: "01 a 03/06/2027",
+    populacao: "10.781 habitantes",
+    fundacao: "13/05/1992 (Emancipação)",
+    feriados: "13/05 (Aniversário e Nossa Senhora de Fátima)",
+    tradicionais: "Festividades da Integração de Fronteira"
+  },
+  "Alto Paraguai": {
+    visita: "04 a 08/06/2027",
+    populacao: "8.009 habitantes",
+    fundacao: "16/12/1953 (Emancipação)",
+    feriados: "16/12 (Aniversário); 19/03 (São José)",
+    tradicionais: "Festa de São José"
+  },
+  "Pontes e Lacerda": {
+    visita: "08 a 11/06/2027",
+    populacao: "55.050 habitantes",
+    fundacao: "29/12/1979 (Emancipação)",
+    feriados: "06/08 (Aniversário e Senhor Bom Jesus)",
+    tradicionais: "Expoesposição Agropecuária (Expoeste)"
+  },
+  "Nortelândia": {
+    visita: "02 a 05/08/2027",
+    populacao: "5.817 habitantes",
+    fundacao: "16/12/1953 (Emancipação)",
+    feriados: "05/02 (Aniversário); 26/07 (Nossa Senhora Sant'Ana)",
+    tradicionais: "Festival de Praia (evento turístico tradicional)"
+  },
+  "Vila Bela da Santíssima Trindade": {
+    visita: "16 a 19/08/2027",
+    populacao: "16.774 habitantes",
+    fundacao: "19/03/1752 (Fundação)",
+    feriados: "19/03 (Aniversário); 19/07 (Santíssima Trindade)",
+    tradicionais: "Festas de Julho: Festa do Glorioso São Benedito, Dança do Chorado e Congada"
+  },
+  "Santo Antônio de Leverger": {
+    visita: "01 a 02/09/2027",
+    populacao: "13.739 habitantes",
+    fundacao: "04/07/1890 (Emancipação)",
+    feriados: "04/07 (Aniversário); 13/06 (Santo Antônio)",
+    tradicionais: "Carnaval de Leverger e Festival do Barco Cross"
+  },
+  "Poconé": {
+    visita: "09 a 10/09/2027",
+    populacao: "31.217 habitantes",
+    fundacao: "21/01/1781 (Fundação); 25/10/1831 (Vila)",
+    feriados: "21/01 (Aniversário); 02/02 (Senhor Bom Jesus dos Passos)",
+    tradicionais: "Cavalhada de Poconé (integrada à Festa do Divino Espírito Santo)"
+  },
+  "Campo Verde": {
+    visita: "13 a 14/09/2027",
+    populacao: "44.741 habitantes",
+    fundacao: "04/07/1988 (Emancipação)",
+    feriados: "04/07 (Aniversário); 25/07 (São Cristóvão)",
+    tradicionais: "Feira Agrícola e Tecnológica (Fenesal)"
+  },
+  "Chapada dos Guimarães": {
+    visita: "16 a 17/09/2027",
+    populacao: "18.983 habitantes",
+    fundacao: "31/07/1751 (Fundação); 15/12/1953 (Emancipação)",
+    feriados: "31/07 (Aniversário); 26/07 (Sant'Ana)",
+    tradicionais: "Festival de Inverno de Chapada dos Guimarães"
+  },
+  "São José do Rio Claro": {
+    visita: "04 a 07/10/2027",
+    populacao: "14.950 habitantes",
+    fundacao: "19/03/1979 (Emancipação)",
+    feriados: "19/03 (Aniversário e São José)",
+    tradicionais: "ExpoClaro"
+  },
+  "Aripuanã": {
+    visita: "18 a 21/10/2027",
+    populacao: "24.611 habitantes",
+    fundacao: "31/12/1943 (Criação); 19/12/1979 (Reorganização)",
+    feriados: "19/12 (Aniversário); 04/10 (São Francisco de Assis)",
+    tradicionais: "Festa do Padroeiro e Torneio de Pesca"
+  },
+  "Tapurah": {
+    visita: "08 a 11/11/2027",
+    populacao: "15.030 habitantes",
+    fundacao: "04/07/1988 (Emancipação)",
+    feriados: "04/07 (Aniversário); 12/10 (Nossa Senhora Aparecida)",
+    tradicionais: "Festa da Soja e do Milho"
+  }
+};
+
+function normalizarMunicipio(nome) {
+  return nome.normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function detail(p) {
+  const d = document.getElementById("detail");
+  d.innerHTML = "";
+
+  const title = document.createElement("div");
+  title.className = "name";
+  title.textContent = p.municipio;
+  d.appendChild(title);
+
+  const status = document.createElement("div");
+  status.style.margin = "7px 0 10px";
+
+  if (p.destacado) {
+    status.innerHTML = '<span class="tag">Destacado no mapa original</span>';
+  } else {
+    status.textContent = "Não destacado no mapa original";
+  }
+  d.appendChild(status);
+
+  const code = document.createElement("div");
+  code.textContent = "Código IBGE: " + p.codigo;
+  d.appendChild(code);
+
+  const area = document.createElement("div");
+  area.textContent = "Área municipal: " +
+    p.area_km2.toLocaleString("pt-BR") + " km²";
+  d.appendChild(area);
+
+  const nomeEncontrado = Object.keys(dadosMunicipios).find(
+    nome => normalizarMunicipio(nome) ===
+      normalizarMunicipio(p.municipio)
+  );
+
+  const dados = nomeEncontrado ? dadosMunicipios[nomeEncontrado] : null;
+
+  function adicionarInfo(rotulo, valor) {
+    if (!valor) return;
+
+    const linha = document.createElement("p");
+    linha.className = "note";
+
+    const titulo = document.createElement("strong");
+    titulo.textContent = rotulo + ": ";
+
+    linha.appendChild(titulo);
+    linha.appendChild(document.createTextNode(valor));
+    d.appendChild(linha);
+  }
+
+  if (dados) {
+    adicionarInfo("Data prevista para visita", dados.visita);
+    adicionarInfo("População — Censo 2022", dados.populacao);
+    adicionarInfo("Fundação / emancipação", dados.fundacao);
+    adicionarInfo("Feriados municipais / religiosos", dados.feriados);
+    adicionarInfo("Datas comemorativas / tradicionais", dados.tradicionais);
+  } else {
+    adicionarInfo(
+      "Informações complementares",
+      "Ainda não há dados cadastrados para este município."
+    );
+  }
+
+  const note = document.createElement("p");
+  note.className = "note";
+  note.textContent =
+    "A quantidade de atendimentos neste município não consta no arquivo de referência.";
+  d.appendChild(note);
 }
 function onEachFeature(feature,layer){
  layer.on({
