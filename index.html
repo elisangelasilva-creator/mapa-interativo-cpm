@@ -233,10 +233,41 @@ footer {
     gap: 8px;
   }
 }
+.logos-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin: 0 auto 20px;
+  padding: 10px 16px;
+}
+
+.logos-cabecalho img {
+  width: auto;
+  height: 65px;
+  max-width: 30%;
+  object-fit: contain;
+}
+
+@media (max-width: 600px) {
+  .logos-cabecalho {
+    gap: 14px;
+  }
+
+  .logos-cabecalho img {
+    height: 45px;
+  }
+}
 </style>
 </head>
 <body>
 <header>
+  <div class="logos-cabecalho">
+    <img src="logos/logo.setasc.png" alt="SETASC / SADH">
+    <img src="logos/logo.nepomi.png" alt="NEPOMI">
+    <img src="logos/logo.cpm.png" alt="CPM">
+  </div>
   <div class="kicker">GOVERNO DE MATO GROSSO • SETASC / SADH</div>
 
   <h1>Mapa de Formação aos Municípios</h1>
